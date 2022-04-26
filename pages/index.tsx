@@ -1,8 +1,39 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import useSWR from 'swr'
+import ITimeEntry from '../models/ITimeEntry'
+import TimeEntryCard from '../components/timeEntryCard'
+
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      // props for your component
+    }
+  }
+}
+
+// async function fetcher<T>(input: RequestInfo) {
+//     var response = await fetch(input)
+//     return response.json() as Promise<T>
+// }
+
+// async function fetcher<T>(input: RequestInfo) {
+//     const response = await fetch(input)
+//     return await (response.json() as Promise<T>)
+// }
 
 export default function Home() : JSX.Element {
+
+  const fetcher = (input: RequestInfo) => fetch(input).then(res => res.json())
+
+  const { data, error } = useSWR("http://localhost:5000/timeEntries", fetcher)
+
+  if (error || !(data as ITimeEntry[])) return <div>failed to load</div>
+  if (!data) return <div>loading...</div>
+
+  console.log(data)
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,8 +44,10 @@ export default function Home() : JSX.Element {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to TimeTracker!
         </h1>
+
+        {/* {data.map(timeEntry => <TimeEntryCard timeEntry={timeEntry}/>)} */}
 
         <p className={styles.description}>
           Get started by editing{' '}
@@ -22,7 +55,12 @@ export default function Home() : JSX.Element {
         </p>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
+          <ul>
+            {data.map(timeEntry => <li className={styles.card} key={timeEntry.id}><TimeEntryCard timeEntry={timeEntry}/></li>)}
+          </ul>
+
+
+          {/* <a href="https://nextjs.org/docs" className={styles.card}>
             <h2>Documentation &rarr;</h2>
             <p>Find in-depth information about Next.js features and API.</p>
           </a>
@@ -48,7 +86,7 @@ export default function Home() : JSX.Element {
             <p>
               Instantly deploy your Next.js site to a public URL with Vercel.
             </p>
-          </a>
+          </a> */}
         </div>
       </main>
 
