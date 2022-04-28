@@ -3,12 +3,13 @@ import ITimeEntry from "../models/ITimeEntry";
 import { TimeSpan } from "../models/TimeSpan"
 
 export default function ({timeEntries} : { timeEntries: ITimeEntry[] }) {
-    const idk = TimeSpan.fromString(timeEntries[0].totalHours);
-
     const totalTimeSpan = timeEntries
         .map(timeEntry => TimeSpan.fromString(timeEntry.totalHours))
         .reduce((previousValue, currentValue) => previousValue.add(currentValue))
 
+    const totalHoursString = totalTimeSpan.totalHours > 9 ? totalTimeSpan.totalHours : `0${totalTimeSpan.totalHours}`
+    const minutesString = totalTimeSpan.minutes > 9 ? totalTimeSpan.minutes : `${totalTimeSpan.minutes}0`
+    const secondsString = totalTimeSpan.seconds > 9 ? totalTimeSpan.seconds : `${totalTimeSpan.seconds}0`
 
     debugger
     return (
@@ -26,7 +27,7 @@ export default function ({timeEntries} : { timeEntries: ITimeEntry[] }) {
             </tbody>
             <tfoot>
                 <tr>
-                    <td>Wochensumme: {totalTimeSpan.totalHours}:{totalTimeSpan.minutes}:{totalTimeSpan.seconds}</td>
+                    <td>Wochensumme: {totalHoursString}:{minutesString}:{secondsString}</td>
                 </tr>
             </tfoot>
         </table>
