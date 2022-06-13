@@ -1,8 +1,11 @@
 import TimeEntryCard from '../components/timeEntryCard'
 import ITimeEntry from "../models/ITimeEntry";
 import { TimeSpan } from "../models/TimeSpan"
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 
 export default function ({timeEntries} : { timeEntries: ITimeEntry[] }) {
+    const methods = useFormContext<ITimeEntry>();
+
     const totalTimeSpan = timeEntries
         .map(timeEntry => TimeSpan.fromString(timeEntry.totalHours))
         .reduce((previousValue, currentValue) => previousValue.add(currentValue))
@@ -13,23 +16,31 @@ export default function ({timeEntries} : { timeEntries: ITimeEntry[] }) {
 
     debugger
     return (
-        <table className="grid min-w-min w-1/2">
-            <tbody className="py-1 px-1 rounded-md border-indigo-600 border-2">
-                <tr className="text-left">
-                    <th className="px-1">Weekday</th>
-                    <th className="px-1">Date</th>
-                    <th className="px-1">Start</th>
-                    <th className="px-1">End</th>
-                    <th className="px-1">Pause</th>
-                    <th className="px-1">Total</th>
-                </tr>
-                {timeEntries.map(timeEntry => <TimeEntryCard key={timeEntry.id} timeEntry={timeEntry}/>)}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td>Wochensumme: {totalHoursString}:{minutesString}:{secondsString}</td>
-                </tr>
-            </tfoot>
-        </table>
+        <FormProvider {...methods}>
+            <form>
+                <table className="grid min-w-min w-1/2">
+                    <tbody className="py-1 px-1 rounded-md border-2 border-[#ffbbdc] bg-[#ffdced]">
+                        <tr>
+                            <th className="px-1">Weekday</th>
+                            <th className="px-1">Date</th>
+                            <th className="px-1">Start</th>
+                            <th className="px-1">End</th>
+                            <th className="px-1">Pause</th>
+                            <th className="px-1">Total</th>
+                        </tr>
+                        {timeEntries.map(timeEntry => <TimeEntryCard key={timeEntry.id} timeEntry={timeEntry}/>)}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td className="border-t-2 border-black">{totalHoursString}:{minutesString}:{secondsString}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <input type="submit" />
+            </form>
+        </FormProvider>
     )
 }
