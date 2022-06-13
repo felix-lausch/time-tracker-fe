@@ -63,8 +63,7 @@ export default function() {
               {timeEntry.totalHours}
             </p>
           </div>
-          <input className="bg-purple-300 hover:bg-purple-400 active:bg-purple-500 border border-purple-500 active:border-purple-600 rounded-lg" type="submit"/>
-          <button><p className="font-semibold"><b>hio</b></p></button>
+          <input className="bg-purple-300 hover:bg-purple-400 active:bg-purple-500 border border-gray-500 active:border-purple-600 rounded-lg" type="submit"/>
         </div>
       </form>
     )
