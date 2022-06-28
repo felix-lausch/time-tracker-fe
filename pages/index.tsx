@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import ITimeEntry from '../models/ITimeEntry'
-import TimeEntryCard from '../components/timeEntryCard'
 import { httpFetchAsync } from '../services/httpService'
 import TimeEntryTable from "../components/timeEntryTable"
 
@@ -22,7 +21,11 @@ export async function getServerSideProps(_context: any) {
   }
 }
 
-export default function Home({ timeEntries }) {
+type HomeProps = {
+  timeEntries: ITimeEntry[],
+}
+
+export default function Home({ timeEntries }: HomeProps) {
   if (!timeEntries || timeEntries.length === 0) return <div>failed to load time entries :/</div>
 
   // console.log(timeEntries)

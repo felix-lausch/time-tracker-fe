@@ -4,7 +4,7 @@ import ITimeEntry from "../models/ITimeEntry"
 export default function() {
     const { handleSubmit, register, formState: { errors } } = useForm<ITimeEntry>();
 
-    const onSubmit = (formInput) => {
+    const onSubmit = (formInput: ITimeEntry) => {
       console.log(formInput)
     }
 

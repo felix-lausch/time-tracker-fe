@@ -1,100 +1,48 @@
-import TimeEntryInput, {
-  TimeEntryView,
-  Weekday,
-} from "../components/timeEntryInput";
+import TimeEntryInput from "../components/timeEntryInput";
 import ITimeEntry from "../models/ITimeEntry";
 import { httpFetchAsync } from "../services/httpService";
 
 export async function getServerSideProps(_context: any) {
-  let result: ITimeEntry[] = []
+  let fetchResult: ITimeEntry[] = [];
 
   try {
-    result = await httpFetchAsync<ITimeEntry[]>("/timeEntries", "GET")
-  }
-  catch (error){
-  }
-  
+    fetchResult = await httpFetchAsync<ITimeEntry[]>("/timeEntries", "GET");
+  } catch (error) {}
+
   return {
     props: {
-      timeEntries: result
-    }
-  }
+      timeEntries: fetchResult,
+    },
+  };
 }
 
-export default function PostTest() {
-  const testTimeInputProps = [
-    {
-      date: "01.06.2022",
-      weekday: "MONDAY",
+type PostTestProps = {
+  timeEntries: ITimeEntry[];
+};
+
+export default function PostTest({ timeEntries }: PostTestProps) {
+  console.log({timeEntries});
+  
+  const timeInputProps = timeEntries.map(timeEntry => {
+    return {
+      date: timeEntry.displayDate,
+      weekday: timeEntry.weekday,
       timeEntryView: {
-        start: "7:30",
-        end: "15:00",
-        pauseHours: "2",
+        start: timeEntry.displayStartTime,
+        end: timeEntry.displayEndTime,
+        pauseHours: String(timeEntry.pauseHours),
       },
-    },
-    {
-      date: "02.06.2022",
-      weekday: "TUESDAY",
-      timeEntryView: {
-        start: "8:30",
-        end: "15:00",
-        pauseHours: "1",
-      },
-    },
-    {
-      date: "03.06.2022",
-      weekday: "WEDNESDAY",
-      timeEntryView: {
-        start: "7:30",
-        end: "15:00",
-        pauseHours: "2",
-      },
-    },
-    {
-      date: "04.06.2022",
-      weekday: "THURSDAY",
-      timeEntryView: {
-        start: "7:30",
-        end: "15:00",
-        pauseHours: "2",
-      },
-    },
-    {
-      date: "05.06.2022",
-      weekday: "FRIDAY",
-      timeEntryView: {
-        start: "7:30",
-        end: "15:00",
-        pauseHours: "2",
-      },
-    },
-    {
-      date: "06.06.2022",
-      weekday: "SATURDAY",
-    },
-    {
-      date: "07.06.2022",
-      weekday: "SUNDAY",
-    },
-    {
-      date: "08.06.2022",
-      weekday: "MONDAY",
-    },
-    {
-      date: "09.06.2022",
-      weekday: "TUESDAY",
-    },
-  ];
+    }
+  });
 
   return (
     <>
       <div className="">
-        {testTimeInputProps.map((prop, index) => (
-          <div key={index}>
+        {timeInputProps.map((prop) => (
+          <div key={prop.date}>
             <TimeEntryInput
               date={prop.date}
-              weekday={prop.weekday as Weekday}
-              wrapperClassName={""}
+              weekday={prop.weekday}
               timeEntryView={prop.timeEntryView}
             />
           </div>

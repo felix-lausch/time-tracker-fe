@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import Input from "../components/input";
+import { Weekday } from "../models/enums";
 import TimeEntry from "../models/ITimeEntry";
 import { httpFetchAsync } from "../services/httpService";
 import {
@@ -12,17 +13,8 @@ export type TimeEntryInputProps = {
   timeEntryView?: TimeEntryView;
   weekday: Weekday;
   date: string;
-  wrapperClassName: string;
+  wrapperClassName?: string;
 };
-
-export type Weekday =
-  | "MONDAY"
-  | "TUESDAY"
-  | "WEDNESDAY"
-  | "THURSDAY"
-  | "FRIDAY"
-  | "SATURDAY"
-  | "SUNDAY";
 
 export type TimeEntryView = {
   start: string;
@@ -101,19 +93,16 @@ export default function TimeEntryInput({
               {date}
             </p>
             <Input
-              wrapperClassName=""
               placeholder={"start hh:mm"}
               name={"start"}
               registerOptions={HoursMinutesValidation}
             />
             <Input
-              wrapperClassName=""
               placeholder={"end hh:mm"}
               name={"end"}
               registerOptions={HoursMinutesValidation}
             />
             <Input
-              wrapperClassName=""
               placeholder={"pauseHours"}
               name={"pauseHours"}
               registerOptions={DecimalHoursValidation}
