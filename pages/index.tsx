@@ -35,13 +35,6 @@ export default function Home({ timeEntries }) {
       </Head>
 
       <main>
-        <h1 className="tracking-wide font-bold text-3xl">
-          Welcome to TimeTracker!
-        </h1>
-
-        <p className="bg-purple-200">
-          Get started by entering your working times
-        </p>
         <br/>
         <TimeEntryTable timeEntries={timeEntries}></TimeEntryTable>
       </main>
