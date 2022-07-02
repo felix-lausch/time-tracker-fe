@@ -30,7 +30,7 @@ export default function PostTest({ month }: PostTestProps) {
 
     if (timeEntriesByDay.timeEntries.length > 0) {
       timeEntryView = {
-        id: timeEntriesByDay.timeEntries[0].id,
+        id: timeEntriesByDay.timeEntries[0].id ?? "",
         start: timeEntriesByDay.timeEntries[0].displayStartTime,
         end: timeEntriesByDay.timeEntries[0].displayEndTime,
         pauseHours: String(timeEntriesByDay.timeEntries[0].pauseHours),
