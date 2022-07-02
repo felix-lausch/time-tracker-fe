@@ -1,10 +1,10 @@
 import { useForm, SubmitHandler, useFormContext } from "react-hook-form"
-import ITimeEntry from "../models/ITimeEntry"
+import TimeEntry from "../models/TimeEntry"
 
 export default function() {
-    const { handleSubmit, register, formState: { errors } } = useForm<ITimeEntry>();
+    const { handleSubmit, register, formState: { errors } } = useForm<TimeEntry>();
 
-    const onSubmit = (formInput: ITimeEntry) => {
+    const onSubmit = (formInput: TimeEntry) => {
       console.log(formInput)
     }
 

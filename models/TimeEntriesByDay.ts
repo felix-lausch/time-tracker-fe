@@ -1,8 +1,8 @@
 import { Weekday } from "./enums"
-import ITimeEntry from "./ITimeEntry"
+import TimeEntry from "./TimeEntry"
 
 export default interface TimeEntriesByDay {
   "date": string,
   "weekday": Weekday,
-  "timeEntries": ITimeEntry[],
+  "timeEntries": TimeEntry[],
 }

@@ -1,50 +1,36 @@
 import TimeEntryInput from "../components/timeEntryInput";
-import ITimeEntry from "../models/ITimeEntry";
+import TimeEntry from "../models/TimeEntry";
+import Month from "../models/Month";
 import TimeEntriesByDay from "../models/TimeEntriesByDay";
 import { httpFetchAsync } from "../services/httpService";
 
 export async function getServerSideProps(_context: any) {
-  let fetchResult: TimeEntriesByDay[] = [];
+  let fetchResult = {};
 
   try {
-    // fetchResult = await httpFetchAsync<ITimeEntry[]>("/timeEntries", "GET");
-    fetchResult = await httpFetchAsync<TimeEntriesByDay[]>("/dayEntries/current", "GET");
+    fetchResult = await httpFetchAsync<Month>("/dayEntries/current", "GET");
   } catch (error) {}
 
   return {
     props: {
-      timeEntriesByDay: fetchResult,
+      month: fetchResult,
     },
   };
 }
 
 type PostTestProps = {
-  timeEntries: ITimeEntry[];
-  timeEntriesByDay: TimeEntriesByDay[];
+  month: Month,
 };
 
-export default function PostTest({ timeEntriesByDay }: PostTestProps) {
-  // console.log({timeEntries});
-  
-  // const timeInputProps = timeEntries.map(timeEntry => {
-  //   return {
-  //     date: timeEntry.displayDate,
-  //     weekday: timeEntry.weekday,
-  //     timeEntryView: {
-  //       start: timeEntry.displayStartTime,
-  //       end: timeEntry.displayEndTime,
-  //       pauseHours: String(timeEntry.pauseHours),
-  //     },
-  //   }
-  // });
-
-  const timeInputProps = timeEntriesByDay.map(timeEntriesByDay => {
+export default function PostTest({ month }: PostTestProps) {
+  const timeInputProps = month?.days?.map(timeEntriesByDay => {
     var timeEntryView = undefined;
 
     console.log(timeEntriesByDay)
 
     if (timeEntriesByDay.timeEntries.length > 0) {
       timeEntryView = {
+        id: timeEntriesByDay.timeEntries[0].id,
         start: timeEntriesByDay.timeEntries[0].displayStartTime,
         end: timeEntriesByDay.timeEntries[0].displayEndTime,
         pauseHours: String(timeEntriesByDay.timeEntries[0].pauseHours),
@@ -60,8 +46,16 @@ export default function PostTest({ timeEntriesByDay }: PostTestProps) {
 
   return (
     <>
-      <div className="">
-        {timeInputProps.map((prop) => (
+      <div className="flex flex-row items-center space-x-4 py-4">
+        <div className="h-8 w-8 border-indigo-500 bg-indigo-400 hover:bg-indigo-500 active:bg-indigo-600 rounded-md text-center">
+          <span className="select-none text-lg text-white font-mono font-bold">{"<"}</span>
+        </div>
+        <span>{`${month.monthString} ${month.year}`}</span>
+        <div className="h-8 w-8 border-indigo-500 bg-indigo-400 hover:bg-indigo-500 active:bg-indigo-600  rounded-md text-center">
+          <span className="select-none text-lg text-white font-mono font-bold">{">"}</span>
+        </div>
+      </div>
+        {timeInputProps?.map((prop) => (
           <div key={prop.date}>
             <TimeEntryInput
               date={prop.date}
@@ -70,7 +64,6 @@ export default function PostTest({ timeEntriesByDay }: PostTestProps) {
             />
           </div>
         ))}
-      </div>
     </>
   );
 }

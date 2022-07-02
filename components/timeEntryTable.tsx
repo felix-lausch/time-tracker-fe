@@ -1,10 +1,10 @@
 import TimeEntryCard from '../components/timeEntryCard'
-import ITimeEntry from "../models/ITimeEntry";
+import TimeEntry from "../models/TimeEntry";
 import { TimeSpan } from "../models/TimeSpan"
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 
-export default function ({timeEntries} : { timeEntries: ITimeEntry[] }) {
-    const methods = useFormContext<ITimeEntry>();
+export default function ({timeEntries} : { timeEntries: TimeEntry[] }) {
+    const methods = useFormContext<TimeEntry>();
 
     const totalTimeSpan = timeEntries
         .map(timeEntry => TimeSpan.fromString(timeEntry.totalHours))

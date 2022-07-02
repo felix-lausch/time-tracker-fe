@@ -1,13 +1,13 @@
 import Head from 'next/head'
-import ITimeEntry from '../models/ITimeEntry'
+import TimeEntry from '../models/TimeEntry'
 import { httpFetchAsync } from '../services/httpService'
 import TimeEntryTable from "../components/timeEntryTable"
 
 export async function getServerSideProps(_context: any) {
-  let result: ITimeEntry[] = []
+  let result: TimeEntry[] = []
 
   try {
-    result = await httpFetchAsync<ITimeEntry[]>("/timeEntries", "GET")
+    result = await httpFetchAsync<TimeEntry[]>("/timeEntries", "GET")
   }
   catch (error){
     //TODO: what can i do here?
@@ -22,7 +22,7 @@ export async function getServerSideProps(_context: any) {
 }
 
 type HomeProps = {
-  timeEntries: ITimeEntry[],
+  timeEntries: TimeEntry[],
 }
 
 export default function Home({ timeEntries }: HomeProps) {

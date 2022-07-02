@@ -1,14 +1,14 @@
-import ITimeEntry from "../models/ITimeEntry";
+import TimeEntry from "../models/TimeEntry";
 import { useForm, SubmitHandler, useFormContext } from "react-hook-form"
 
-export default function TimeEntryCard({timeEntry} : { timeEntry: ITimeEntry }) {
-    const { register, formState: { errors } } = useForm<ITimeEntry>();
+export default function TimeEntryCard({timeEntry} : { timeEntry: TimeEntry }) {
+    const { register, formState: { errors } } = useForm<TimeEntry>();
 
     const date = new Date(timeEntry.displayDate_US)
 
     const weekday = date.getDay() as WeekdayEnum
 
-    const handleSubmit = (formInput) => {
+    const handleSubmit = (formInput: TimeEntry) => {
         console.log(formInput)
     }
 

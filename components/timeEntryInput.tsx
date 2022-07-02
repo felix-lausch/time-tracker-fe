@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import Input from "../components/input";
 import { Weekday } from "../models/enums";
-import TimeEntry from "../models/ITimeEntry";
+import TimeEntry from "../models/TimeEntry";
 import { httpFetchAsync } from "../services/httpService";
 import {
   HoursMinutesValidation,
@@ -17,6 +17,7 @@ export type TimeEntryInputProps = {
 };
 
 export type TimeEntryView = {
+  id: string;
   start: string;
   end: string;
   pauseHours: string;
@@ -31,6 +32,7 @@ export default function TimeEntryInput({
   const methods = useForm<TimeEntryView>({
     mode: "onSubmit",
     defaultValues: {
+      id: "",
       start: "",
       end: "",
       pauseHours: "",
@@ -38,48 +40,42 @@ export default function TimeEntryInput({
     shouldFocusError: true,
   });
 
-  const { handleSubmit, reset: initializeForm } = methods;
-
-  const isUpdate = Boolean(timeEntryView);
-  const [hasInitializedData, setHasInitializedData] = useState(false);
+  const { handleSubmit, reset: initializeForm, setValue } = methods;
 
   useEffect(() => {
-    if (timeEntryView && !hasInitializedData) {
+    if (timeEntryView) {
       initializeForm(timeEntryView);
-      setHasInitializedData(true);
     }
-  }, [timeEntryView, initializeForm, hasInitializedData]);
+  }, [timeEntryView, initializeForm]);
 
   async function onSubmit(formData: TimeEntryView) {
     console.log(formData);
 
-    const startSplit = formData.start.split(":");
-    const endSplit = formData.end.split(":");
+    const timeEntry = MapToTimeEntry(formData, date);
 
-    const pauseHours =
-      formData.pauseHours === ""
-        ? 0
-        : parseFloat(formData.pauseHours.replace(",", "."));
 
-    const body = {
-      startHours: parseInt(startSplit[0]),
-      startMinutes: parseInt(startSplit[1]),
-      endHours: parseInt(endSplit[0]),
-      endMinutes: parseInt(endSplit[1]),
-      pauseHours: pauseHours,
-    };
+    if (timeEntry.id) {
+      const postResult = await httpFetchAsync<TimeEntry>(
+        "/timeEntry",
+        "POST",
+        timeEntry
+      );
 
-    const postResult = await httpFetchAsync<TimeEntry>(
-      "/timeEntry",
-      "POST",
-      body
-    );
+      setValue("id", postResult?.id ?? "");
+      console.log(postResult);
+    } else {
+      const putResult = await httpFetchAsync<TimeEntry>(
+        "/timeEntry/" + formData.id,
+        "PUT",
+        timeEntry
+      );
 
-    console.log(postResult);
+      console.log(putResult);
+    }
   }
 
-  const bgColor =
-    weekday === "SATURDAY" || weekday === "SUNDAY" ? "bg-gray-300" : "bg-indigo-200";
+  const isWeekend = weekday === "SATURDAY" || weekday === "SUNDAY";
+  const bgColor = isWeekend ? "bg-gray-300" : "bg-indigo-200";
 
   return (
     <div className={wrapperClassName}>
@@ -108,7 +104,7 @@ export default function TimeEntryInput({
               registerOptions={DecimalHoursValidation}
             />
             <button
-              className="border-2 h-8 w-8 rounded-md border-indigo-500 bg-indigo-400 hover:bg-indigo-500"
+              className="border-2 h-8 w-8 rounded-md border-indigo-500 bg-indigo-400 hover:bg-indigo-500 active:bg-indigo-600"
               type="submit"
             />
           </form>
@@ -117,3 +113,28 @@ export default function TimeEntryInput({
     </div>
   );
 }
+function MapToTimeEntry(timeEntryView: TimeEntryView, date: string): TimeEntry {
+  const startSplit = timeEntryView.start.split(":");
+  const endSplit = timeEntryView.end.split(":");
+
+  const pauseHours =
+    timeEntryView.pauseHours === ""
+      ? 0
+      : parseFloat(timeEntryView.pauseHours.replace(",", "."));
+
+  const timeEntry: TimeEntry = {
+    id: timeEntryView.id === "" ? undefined : timeEntryView.id,
+    date: date,
+    startHours: parseInt(startSplit[0]),
+    startMinutes: parseInt(startSplit[1]),
+    endHours: parseInt(endSplit[0]),
+    endMinutes: parseInt(endSplit[1]),
+    pauseHours: pauseHours,
+    displayEndTime: "",
+    displayStartTime: "",
+    totalHours: "", //TODO: what to do with these ? i think i should split the model OR better even simplify the model to not use all the ints at all
+  }
+
+  return timeEntry;
+}
+
